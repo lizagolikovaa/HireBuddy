@@ -243,8 +243,8 @@ document.addEventListener('click',e=>{
  const go=e.target.closest('[data-go]');if(go){show(go.dataset.go);return}
  const pf=e.target.closest('[data-pf]');if(pf){pflt=pf.dataset.pf;r5();return}
  const cf=e.target.closest('[data-cf]');if(cf){cflt=cf.dataset.cf;r5();return}
- const rm=e.target.closest('[data-rm]');if(rm){pool.unshift(...team.splice(+rm.dataset.rm,1));openPick=false;r1();r2();r3();return}
- const ad=e.target.closest('[data-add]');if(ad){{const i=pool.findIndex(p=>p[0]===ad.dataset.add);team.push(...pool.splice(i,1))}openPick=false;r1();r2();r3();return}
+ const rm=e.target.closest('[data-rm]');if(rm){pool.unshift(...team.splice(+rm.dataset.rm,1));r1();r2();r3();return}
+ const ad=e.target.closest('[data-add]');if(ad){{const i=pool.findIndex(p=>p[0]===ad.dataset.add);team.push(...pool.splice(i,1))}r1();r2();r3();return}
  const c=e.target.closest('[data-f]');if(c){flt=c.dataset.f;r2();return}
  const k=e.target.closest('[data-c]');if(k){const id=k.dataset.c;
   if(ck.includes(id)){ck=ck.filter(x=>x!==id);hint=''}else if(ck.length<3){ck.push(id);hint=''}else hint='max';r2();return}
