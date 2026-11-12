@@ -62,7 +62,8 @@ button{font-family:inherit;color:inherit;cursor:pointer;border:0;padding:0}
 .addb.open:hover{background:#2B2F32!important}
 .pickh{font-size:11.5px;font-weight:600;color:#84949C;letter-spacing:.02em;text-transform:uppercase;padding:12px 14px 8px;background:#fff}
 #cpage{position:absolute;left:264px;top:150px;width:1144px}
-.cchips{display:flex;gap:8px;margin-top:20px}
+.cchips{display:flex;align-items:center;gap:8px;margin-top:20px}
+.clab{width:68px;font-size:13.5px;font-weight:500;color:var(--muted)}
 .chip2{height:32px;padding:0 16px;border-radius:16px;border:1px solid #E2E3E3;background:#fff;font-size:14px;font-weight:600;color:var(--ink)}
 .chip2.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .ctab{margin-top:24px;border:1px solid #E9EDED;border-radius:20px;background:#fff;overflow:hidden}
@@ -141,7 +142,7 @@ const part=t=>{const h=+t.slice(0,2);return h<12?'Morning':h<17?'Afternoon':'Eve
 const $=id=>document.getElementById(id);
 const T0=[['Anna Lee','Sr. System Designer · New York','Sr. System Designer'],['David Ortiz','Sr. Backend Designer · Austin','Sr. Backend Engineer'],['Sarah Kim','Sr. Project Manager · San Francisco','Sr. Project Manager']];
 const POOL=[['Priya Nair','Staff Backend Engineer · London','Staff Backend Engineer'],['Marcus Webb','Engineering Manager · Toronto','Engineering Manager'],['Lena Fischer','Sr. Data Engineer · Berlin','Sr. Data Engineer'],['Tom Reyes','Sr. SRE · Austin','Sr. SRE']];
-let team=T0.slice(),openPick=false;
+let team=T0.slice(),pool=POOL.slice(),openPick=false;
 const first=p=>p[0].split(' ')[0],ini=p=>p[0][0];
 const joinN=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
 let ck=['b','c','e'],flt='All',hint='',sel3=0,contentH=900;
@@ -152,25 +153,30 @@ const CHK='<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l2.6 2
 
 
 
-const CAND=[['Maya Chen','Senior Backend Engineer · Berlin, Germany','Technical panel','READY FOR THE TECHNICAL PANEL','lime','1 day','s1'],
-['Daniel Okafor','Backend Engineer · Lagos, Nigeria','Recruiter call','RECRUITER CALL','','2 days'],
-['Elena Petrova','Senior Frontend Engineer · Warsaw, Poland','Technical panel','TECHNICAL PANEL BOOKED','blue','Thu · 15:00'],
-['Rahul Mehta','Staff Engineer · Bangalore, India','Decision','DECISION','','3 days'],
-['Sofia Alvarez','Data Engineer · Madrid, Spain','Recruiter call','RECRUITER CALL','','1 day']];
-let cflt='All';
+const CAND=[['Maya Chen','Senior Backend Engineer · Berlin, Germany','Technical panel','READY FOR THE TECHNICAL PANEL','lime','1 day','s1','Developer'],
+['Daniel Okafor','Backend Engineer · Lagos, Nigeria','Recruiter call','RECRUITER CALL','','2 days','','Developer'],
+['Elena Petrova','Senior Frontend Engineer · Warsaw, Poland','Technical panel','TECHNICAL PANEL BOOKED','blue','Thu · 15:00','','Developer'],
+['Chloe Martin','Product Designer · Paris, France','Recruiter call','RECRUITER CALL','','4 days','','Designer'],
+['Rahul Mehta','Staff Engineer · Bangalore, India','Decision','DECISION','','3 days','','Developer'],
+['Kenji Tanaka','Senior UX Designer · Tokyo, Japan','Technical panel','TECHNICAL PANEL BOOKED','blue','Fri · 11:00','','Designer'],
+['Sofia Alvarez','Data Engineer · Madrid, Spain','Recruiter call','RECRUITER CALL','','1 day','','Data'],
+['Amara Singh','Product Manager · London, UK','Decision','DECISION','','2 days','','Product']];
+let cflt='All',pflt='All';
 function r5(){
  const ST=['All','Recruiter call','Technical panel','Decision'],cnt=x=>x==='All'?CAND.length:CAND.filter(c=>c[2]===x).length;
- const rows=CAND.filter(c=>cflt==='All'||c[2]===cflt);
+ const PO=['All','Developer','Designer','Data','Product'],pc=x=>x==='All'?CAND.length:CAND.filter(c=>c[7]===x).length;
+ const rows=CAND.filter(c=>(cflt==='All'||c[2]===cflt)&&(pflt==='All'||c[7]===pflt));
  $('cpage').innerHTML=`<div style="font-size:25px;font-weight:600;line-height:34px">Candidates</div>
- <div class="cchips">${ST.map(x=>`<button class="chip2 ${x===cflt?'on':''}" data-cf="${x}">${x} · ${cnt(x)}</button>`).join('')}</div>
+ <div class="cchips"><span class="clab">Stage:</span>${ST.map(x=>`<button class="chip2 ${x===cflt?'on':''}" data-cf="${x}">${x} · ${cnt(x)}</button>`).join('')}</div>
+ <div class="cchips" style="margin-top:10px"><span class="clab">Position:</span>${PO.map(x=>`<button class="chip2 ${x===pflt?'on':''}" data-pf="${x}">${x==='All'?'All positions':x} · ${pc(x)}</button>`).join('')}</div>
  <div class="ctab"><div class="cgrid chead"><span class="lab">Candidate</span><span class="lab">Stage</span><span class="lab">Waiting</span><span></span></div>`+
- rows.map(c=>`<${c[6]?'button data-go="'+c[6]+'"':'div'} class="cgrid crow ${c[6]?'clk':''}"><span style="display:flex;align-items:center;gap:14px"><span class="cav">${c[0].split(' ').map(w=>w[0]).join('')}</span><span><span style="display:block;font-size:16px;font-weight:700">${c[0]}</span><span style="display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px">${c[1]}</span></span></span>
+ (rows.length?rows:[null]).map(c=>!c?`<div class="crow" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:600;font-size:15px">No candidates found</div>`:`<${c[6]?'button data-go="'+c[6]+'"':'div'} class="cgrid crow ${c[6]?'clk':''}"><span style="display:flex;align-items:center;gap:14px"><span class="cav">${c[0].split(' ').map(w=>w[0]).join('')}</span><span><span style="display:block;font-size:16px;font-weight:700">${c[0]}</span><span style="display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px">${c[1]}</span></span></span>
   <span><span class="bdg ${c[4]}">${c[3]}</span></span><span style="font-size:14px;font-weight:600">${c[5]}</span>
   <span style="color:var(--muted);font-size:18px">${c[6]?'›':''}</span></${c[6]?'button':'div'}>`).join('')+`</div>`;
  measure();
 }
 function r1(){
- const avail=POOL.filter(p=>!team.some(t=>t[0]===p[0]));
+ const avail=pool;
  $('col1').innerHTML=`<div class="pcard"><div class="lab">The panel · 1 hour 30 min</div><div style="height:8px"></div>`+
   team.map((p,i)=>`<div class="prow"><span class="av34">${ini(p)}</span><div><div class="pn">${p[0]}</div><div class="pr">${p[1]}</div></div>${team.length>1?`<button class="rm" data-rm="${i}" aria-label="Remove ${p[0]}" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>`:''}</div>`).join('')+
   (avail.length?`<button class="addb ${openPick?'open':''}" id="addb" aria-expanded="${openPick}"><i>${openPick?'−':'+'}</i>${openPick?'Hide list':'Add interviewer'}</button>`:'')+
@@ -221,9 +227,10 @@ function r3(){
 }
 document.addEventListener('click',e=>{
  const go=e.target.closest('[data-go]');if(go){show(go.dataset.go);return}
+ const pf=e.target.closest('[data-pf]');if(pf){pflt=pf.dataset.pf;r5();return}
  const cf=e.target.closest('[data-cf]');if(cf){cflt=cf.dataset.cf;r5();return}
- const rm=e.target.closest('[data-rm]');if(rm){team.splice(+rm.dataset.rm,1);openPick=false;r1();r2();r3();return}
- const ad=e.target.closest('[data-add]');if(ad){team.push(POOL.find(p=>p[0]===ad.dataset.add));openPick=false;r1();r2();r3();return}
+ const rm=e.target.closest('[data-rm]');if(rm){pool.unshift(...team.splice(+rm.dataset.rm,1));openPick=false;r1();r2();r3();return}
+ const ad=e.target.closest('[data-add]');if(ad){{const i=pool.findIndex(p=>p[0]===ad.dataset.add);team.push(...pool.splice(i,1))}openPick=false;r1();r2();r3();return}
  const c=e.target.closest('[data-f]');if(c){flt=c.dataset.f;r2();return}
  const k=e.target.closest('[data-c]');if(k){const id=k.dataset.c;
   if(ck.includes(id)){ck=ck.filter(x=>x!==id);hint=''}else if(ck.length<3){ck.push(id);hint=''}else hint='max';r2();return}
